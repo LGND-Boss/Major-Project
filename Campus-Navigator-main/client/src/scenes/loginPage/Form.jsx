@@ -21,7 +21,10 @@ const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters').matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+  confirmPassword: yup.string().required('Please re-enter your password').oneOf([yup.ref('password'), null], 'Passwords must match'),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string()
@@ -37,6 +40,7 @@ const initialValuesRegister = {
   lastName: "",
   email: "",
   password: "",
+  confirmPassword: "",
   location: "",
   occupation: "",
   picture: "",
@@ -173,6 +177,17 @@ const Form = () => {
                   }
                   helperText={touched.occupation && errors.occupation}
                   sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Re-Enter Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                  name="confirmPassword"
+                  error={Boolean(touched.confirmPassword) && Boolean(errors.confirmPassword)}
+                  helperText={touched.confirmPassword && errors.confirmPassword}
+                  sx={{ gridColumn: "span 2" }}
                 />
                 <Box
                   gridColumn="span 4"
